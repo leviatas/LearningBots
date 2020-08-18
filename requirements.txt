@@ -5,6 +5,7 @@ psycopg2>=2.7.3.1
 Flask-SQLAlchemy===2.1
 jsonpickle >=0.8
 
+telethon>=1.14
 pillow>=6.1.0
 cryptg>=0.2
 aiohttp>=3.6.0
