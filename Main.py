@@ -42,10 +42,11 @@ BOT_TOKEN = os.environ.get('bot_token', None)
 if API_ID is None or API_HASH is None:
 	config = configparser.ConfigParser()
 	config.read('init.ini')
-	API_ID = int(config['ENVIROMENT']['TG_API_ID'])
-	API_HASH = config['ENVIROMENT']['TG_API_HASH']
-	STRING_SESSION = config['ENVIROMENT']['STRING_SESSION']
-	BOT_TOKEN = config['ENVIROMENT']['BOT_TOKEN']
+	if config.has_section('ENVIROMENT'):
+		API_ID = int(config['ENVIROMENT']['TG_API_ID'])
+		API_HASH = config['ENVIROMENT']['TG_API_HASH']
+		STRING_SESSION = config['ENVIROMENT']['STRING_SESSION']
+		BOT_TOKEN = config['ENVIROMENT']['BOT_TOKEN']
 
 #--------------------------------- BOT --------------------------------------
 
@@ -64,8 +65,6 @@ def bot_main():
 #-------------------------------FIN BOT ------------------------------------
 
 #------------------------------ USER BOT -----------------------------------
-client1 = TelegramClient(StringSession(STRING_SESSION), API_ID, API_HASH)
-
 # Esto hace que escuche en "Mensajes guardados" y solo mensajes mios (outgoing)
 @events.register(events.NewMessage(chats='me', outgoing=True))
 async def me_handler(event):
@@ -82,8 +81,15 @@ async def me_handler(event):
 		# Entonces respondo ¿Me alegro?
 		await client.send_message('me', 'Me alegro')
 
-# Agrego al cliente la capacidad de escuchar los mensajes de "Mensajes guardados"
-client1.add_event_handler(me_handler)
+client1 = None
+if API_ID and API_HASH and STRING_SESSION:
+	client1 = TelegramClient(StringSession(STRING_SESSION), API_ID, API_HASH)
+	# Agrego al cliente la capacidad de escuchar los mensajes de "Mensajes guardados"
+	client1.add_event_handler(me_handler)
+
+
+
+
 
 #------------------------------ FIN USER BOT -------------------------------
 
@@ -99,5 +105,7 @@ def loop_b():
 
 
 if __name__ == '__main__':
-    p1 = Process(target=loop_a).start()
-    p2 = Process(target=loop_b).start()
+	if client1 is not None:
+		p1 = Process(target=loop_a).start()
+	if BOT_TOKEN is not None:
+		p2 = Process(target=loop_b).start()
