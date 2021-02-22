@@ -16,6 +16,7 @@ from telegram.ext import (InlineQueryHandler, Updater, CommandHandler, \
 	CallbackQueryHandler, MessageHandler, Filters, CallbackContext)
 from telegram.utils.helpers import mention_html, escape_markdown
 
+import asyncio
 import traceback
 import sys
 import os
